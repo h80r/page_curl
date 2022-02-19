@@ -15,10 +15,10 @@ class CurlWidget extends StatefulWidget {
   final bool debugging;
 
   CurlWidget({
-    @required this.frontWidget,
-    @required this.backWidget,
-    @required this.size,
-    @required this.vertical,
+    required this.frontWidget,
+    required this.backWidget,
+    required this.size,
+    required this.vertical,
     this.debugging = false,
   });
 
@@ -36,37 +36,37 @@ class _CurlWidgetState extends State<CurlWidget> {
   int mCurlSpeed = 60;
 
   /* The initial offset for x and y axis movements */
-  int mInitialEdgeOffset;
+  late int mInitialEdgeOffset;
 
   /* Maximum radius a page can be flipped, by default it's the width of the view */
-  double mFlipRadius;
+  late double mFlipRadius;
 
   /* pointer used to move */
-  Vector2D mMovement;
+  late Vector2D mMovement;
 
   /* finger position */
-  Vector2D mFinger;
+  late Vector2D mFinger;
 
   /* movement pointer from the last frame */
-  Vector2D mOldMovement;
+  late Vector2D mOldMovement;
 
   /* paint curl edge */
-  Paint curlEdgePaint;
+  late Paint curlEdgePaint;
 
   /* vector points used to define current clipping paths */
-  Vector2D mA, mB, mC, mD, mE, mF, mOldF, mOrigin;
+  Vector2D? mA, mB, mC, mD, mE, mF, mOldF, mOrigin;
 
   /* vectors that are corners of the entire polygon */
-  Vector2D mM, mN, mO, mP;
+  Vector2D? mM, mN, mO, mP;
 
   /* ff false no draw call has been done */
-  bool bViewDrawn;
+  bool? bViewDrawn;
 
   /* if TRUE we are currently auto-flipping */
-  bool bFlipping;
+  late bool bFlipping;
 
   /* tRUE if the user moves the pages */
-  bool bUserMoves;
+  bool? bUserMoves;
 
   /* used to control touch input blocking */
   bool bBlockTouchInput = false;
@@ -81,17 +81,17 @@ class _CurlWidgetState extends State<CurlWidget> {
 
   Vector2D capMovement(Vector2D point, bool bMaintainMoveDir) {
     // make sure we never ever move too much
-    if (point.distance(mOrigin) > mFlipRadius) {
+    if (point.distance(mOrigin!) > mFlipRadius) {
       if (bMaintainMoveDir) {
         // maintain the direction
-        point = mOrigin.sum(point.sub(mOrigin).normalize().mult(mFlipRadius));
+        point = mOrigin!.sum(point.sub(mOrigin!).normalize().mult(mFlipRadius));
       } else {
         // change direction
-        if (point.x > (mOrigin.x + mFlipRadius))
-          point.x = (mOrigin.x + mFlipRadius);
-        else if (point.x < (mOrigin.x - mFlipRadius))
-          point.x = (mOrigin.x - mFlipRadius);
-        point.y = math.sin(math.acos(abs(point.x - mOrigin.x) / mFlipRadius)) *
+        if (point.x > (mOrigin!.x + mFlipRadius))
+          point.x = (mOrigin!.x + mFlipRadius);
+        else if (point.x < (mOrigin!.x - mFlipRadius))
+          point.x = (mOrigin!.x - mFlipRadius);
+        point.y = math.sin(math.acos(abs(point.x - mOrigin!.x) / mFlipRadius)) *
             mFlipRadius;
       }
     }
@@ -104,18 +104,18 @@ class _CurlWidgetState extends State<CurlWidget> {
 
     // F will follow the finger, we add a small displacement
     // So that we can see the edge
-    mF.x = w - mMovement.x + 0.1;
-    mF.y = h - mMovement.y + 0.1;
+    mF!.x = w - mMovement.x + 0.1;
+    mF!.y = h - mMovement.y + 0.1;
 
     // Set min points
-    if (mA.x == 0) {
-      mF.x = math.min(mF.x, mOldF.x);
-      mF.y = math.max(mF.y, mOldF.y);
+    if (mA!.x == 0) {
+      mF!.x = math.min(mF!.x, mOldF!.x);
+      mF!.y = math.max(mF!.y, mOldF!.y);
     }
 
     // Get diffs
-    double deltaX = w - mF.x;
-    double deltaY = h - mF.y;
+    double deltaX = w - mF!.x;
+    double deltaY = h - mF!.y;
 
     double bh = math.sqrt(deltaX * deltaX + deltaY * deltaY) / 2;
     double tangAlpha = deltaY / deltaX;
@@ -123,34 +123,34 @@ class _CurlWidgetState extends State<CurlWidget> {
     double _cos = math.cos(alpha);
     double _sin = math.sin(alpha);
 
-    mA.x = w - (bh / _cos);
-    mA.y = h.toDouble();
+    mA!.x = w - (bh / _cos);
+    mA!.y = h.toDouble();
 
-    mD.x = w.toDouble();
+    mD!.x = w.toDouble();
     // bound mD.y
-    mD.y = math.min(h - (bh / _sin), height);
+    mD!.y = math.min(h - (bh / _sin), height);
 
-    mA.x = math.max(0, mA.x);
-    if (mA.x == 0) {
-      mOldF.x = mF.x;
-      mOldF.y = mF.y;
+    mA!.x = math.max(0, mA!.x);
+    if (mA!.x == 0) {
+      mOldF!.x = mF!.x;
+      mOldF!.y = mF!.y;
     }
 
     // Get W
-    mE.x = mD.x;
-    mE.y = mD.y;
+    mE!.x = mD!.x;
+    mE!.y = mD!.y;
 
     // bouding corrections
-    if (mD.y < 0) {
-      mD.x = w + tangAlpha * mD.y;
+    if (mD!.y < 0) {
+      mD!.x = w + tangAlpha * mD!.y;
 
-      mE.x = w + math.tan(2 * alpha) * mD.y;
+      mE!.x = w + math.tan(2 * alpha) * mD!.y;
 
       // modify mD to create newmD by cleaning y value
-      Vector2D newmD = Vector2D(mD.x, 0);
+      Vector2D newmD = Vector2D(mD!.x, 0);
       double l = w - newmD.x;
 
-      mE.y = -math.sqrt(abs(math.pow(l, 2) - math.pow((newmD.x - mE.x), 2)));
+      mE!.y = -math.sqrt(abs(math.pow(l, 2) - (math.pow((newmD.x - mE!.x), 2) as double)));
     }
   }
 
@@ -278,13 +278,13 @@ class _CurlWidgetState extends State<CurlWidget> {
     init();
   }
 
-  Widget boundingBox({Widget child}) => child;
+  Widget? boundingBox({Widget? child}) => child;
 
   double getAngle() {
-    double displaceInX = mA.x - mF.x;
+    double displaceInX = mA!.x - mF!.x;
     if (displaceInX == 149.99998333333335) displaceInX = 0;
 
-    double displaceInY = height - mF.y;
+    double displaceInY = height - mF!.y;
     if (displaceInY < 0) displaceInY = 0;
 
     double angle = math.atan(displaceInY / displaceInX);
@@ -296,8 +296,8 @@ class _CurlWidgetState extends State<CurlWidget> {
   }
 
   Offset getOffset() {
-    double xOffset = mF.x;
-    double yOffset = -abs(height - mF.y);
+    double xOffset = mF!.x;
+    double yOffset = -abs(height - mF!.y);
 
     return Offset(xOffset, yOffset);
   }

@@ -1,13 +1,11 @@
 name: page_curl
 description: Add a curling effect to any widgets
 version: 0.0.1
-authors:
-  - Jyotirmoy Paul <mr.jyotirmoy.paul@gmail.com>
 homepage: https://github.com/jyotirmoy-paul/page_curl
 maintainer: Jyotirmoy Paul (@jyotirmoy-paul)
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
