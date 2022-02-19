@@ -31,7 +31,7 @@ class _PageCurlState extends State<PageCurl> {
   double get aspectRatio => width / height;
 
   Widget _buildWidget(Widget child) => Transform.rotate(
-        angle: pi / 2,
+        angle: 3 * pi / 2,
         child: SizedBox(
           width: width,
           height: height,
