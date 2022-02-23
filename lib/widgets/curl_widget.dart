@@ -11,15 +11,18 @@ class CurlWidget extends StatefulWidget {
   final Widget frontWidget;
   final Widget backWidget;
   final Size size;
-  final bool vertical;
   final bool debugging;
+
+  final VoidCallback? onDragUp;
+  final VoidCallback? onDragDown;
 
   CurlWidget({
     required this.frontWidget,
     required this.backWidget,
     required this.size,
-    required this.vertical,
     this.debugging = false,
+    this.onDragUp,
+    this.onDragDown,
   });
 
   @override
@@ -28,9 +31,11 @@ class CurlWidget extends StatefulWidget {
 
 class _CurlWidgetState extends State<CurlWidget> {
   bool get debugging => widget.debugging;
-  bool get isVertical => false;
 
   /* variables that controls drag and updates */
+
+  /* vector point of drag start */
+  late Vector2D _startDragVector;
 
   /* px / draw call */
   int mCurlSpeed = 60;
@@ -150,7 +155,8 @@ class _CurlWidgetState extends State<CurlWidget> {
       Vector2D newmD = Vector2D(mD!.x, 0);
       double l = w - newmD.x;
 
-      mE!.y = -math.sqrt(abs(math.pow(l, 2) - (math.pow((newmD.x - mE!.x), 2) as double)));
+      mE!.y = -math.sqrt(
+          abs(math.pow(l, 2) - (math.pow((newmD.x - mE!.x), 2) as double)));
     }
   }
 
@@ -380,16 +386,13 @@ class _CurlWidgetState extends State<CurlWidget> {
       behavior: HitTestBehavior.opaque,
 
       /* drag start */
-      onVerticalDragStart: isVertical ? onDragCallback : null,
-      onHorizontalDragStart: isVertical ? null : onDragCallback,
+      onHorizontalDragStart: onDragCallback,
 
       /* drag end */
-      onVerticalDragEnd: isVertical ? onDragCallback : null,
-      onHorizontalDragEnd: isVertical ? null : onDragCallback,
+      onHorizontalDragEnd: onDragCallback,
 
       /* drag update */
-      onVerticalDragUpdate: isVertical ? onDragCallback : null,
-      onHorizontalDragUpdate: isVertical ? null : onDragCallback,
+      onHorizontalDragUpdate: onDragCallback,
       child: Stack(
         children: [
           // foreground image + custom painter for shadow

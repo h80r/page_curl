@@ -39,7 +39,6 @@ class HomePage extends StatelessWidget {
             children: [
               /* horizontal */
               PageCurl(
-                vertical: false,
                 back: _buildContainer('This is BACK'),
                 front: _buildContainer(
                   'This is FRONT',

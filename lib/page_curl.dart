@@ -6,7 +6,6 @@ class PageCurl extends StatefulWidget {
   final Widget back;
   final Widget front;
   final Size size;
-  final bool vertical;
   final bool debugging;
 
   PageCurl({
@@ -14,7 +13,6 @@ class PageCurl extends StatefulWidget {
     required this.back,
     required this.front,
     required this.size,
-    this.vertical = false,
     this.debugging = false,
   }) : super(key: key);
 
@@ -64,7 +62,6 @@ class _PageCurlState extends State<PageCurl> {
               frontWidget: _buildWidget(widget.front),
               backWidget: _buildWidget(widget.back),
               size: widget.size,
-              vertical: widget.vertical,
               debugging: debugging,
             ),
           ),
