@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:page_curl/page_curl.dart';
 
 void main() => runApp(App());
@@ -45,6 +46,8 @@ class HomePage extends StatelessWidget {
                   color: Colors.blueGrey,
                 ),
                 size: const Size(200, 150),
+                onDragUp: () => print('This is UP'),
+                onDragDown: () => print('This is DOWN'),
               ),
             ],
           ),

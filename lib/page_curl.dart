@@ -1,28 +1,31 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import 'package:page_curl/widgets/curl_widget.dart';
 
 class PageCurl extends StatefulWidget {
-  final Widget back;
-  final Widget front;
-  final Size size;
-  final bool debugging;
-
   PageCurl({
     Key? key,
     required this.back,
     required this.front,
     required this.size,
-    this.debugging = false,
+    this.onDragUp,
+    this.onDragDown,
   }) : super(key: key);
+
+  final Widget back;
+  final Widget front;
+  final Size size;
+
+  final VoidCallback? onDragUp;
+  final VoidCallback? onDragDown;
 
   @override
   _PageCurlState createState() => _PageCurlState();
 }
 
 class _PageCurlState extends State<PageCurl> {
-  bool get debugging => widget.debugging;
-
   double get width => widget.size.width;
   double get height => widget.size.height;
 
@@ -62,7 +65,8 @@ class _PageCurlState extends State<PageCurl> {
               frontWidget: _buildWidget(widget.front),
               backWidget: _buildWidget(widget.back),
               size: widget.size,
-              debugging: debugging,
+              onDragUp: widget.onDragUp,
+              onDragDown: widget.onDragDown,
             ),
           ),
         ),

@@ -1,9 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+
 import 'package:page_curl/clippers/curl_background_clipper.dart';
 import 'package:page_curl/clippers/curl_backside_clipper.dart';
 import 'package:page_curl/models/touch_event.dart';
-import 'dart:math' as math;
-
 import 'package:page_curl/models/vector_2d.dart';
 import 'package:page_curl/painters/curl_shadow_painter.dart';
 
@@ -11,7 +12,6 @@ class CurlWidget extends StatefulWidget {
   final Widget frontWidget;
   final Widget backWidget;
   final Size size;
-  final bool debugging;
 
   final VoidCallback? onDragUp;
   final VoidCallback? onDragDown;
@@ -20,7 +20,6 @@ class CurlWidget extends StatefulWidget {
     required this.frontWidget,
     required this.backWidget,
     required this.size,
-    this.debugging = false,
     this.onDragUp,
     this.onDragDown,
   });
@@ -30,8 +29,6 @@ class CurlWidget extends StatefulWidget {
 }
 
 class _CurlWidgetState extends State<CurlWidget> {
-  bool get debugging => widget.debugging;
-
   /* variables that controls drag and updates */
 
   /* vector point of drag start */
@@ -221,10 +218,19 @@ class _CurlWidgetState extends State<CurlWidget> {
       case TouchEventType.END:
         bUserMoves = false;
         bFlipping = true;
+
+        if (mFinger.x < _startDragVector.x) {
+          if (widget.onDragUp != null) widget.onDragUp!();
+        } else {
+          if (widget.onDragDown != null) widget.onDragDown!();
+        }
+
         resetMovement();
         break;
 
       case TouchEventType.START:
+        _startDragVector = Vector2D(mFinger.x, mFinger.y);
+
         mOldMovement.x = mFinger.x;
         mOldMovement.y = mFinger.y;
         break;
